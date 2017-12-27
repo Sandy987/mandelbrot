@@ -7,13 +7,14 @@ import (
 )
 
 const (
-	filename   = "out.png"
-	complexity = 2056 * 2
-	size       = 4096 * 2
+	filename    = "out.png"
+	complexity  = 1024
+	size        = 2048
+	workerCount = 4
 )
 
 func main() {
-	img := mandelbrotPerRow(size)
+	img := mandelbrotWorkers(size, workerCount)
 
 	filename := "out.png"
 	f, err := os.Create(filename)

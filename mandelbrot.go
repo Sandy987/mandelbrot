@@ -3,6 +3,7 @@ package main
 import (
 	"image"
 	"image/color"
+	"sync"
 )
 
 func mandelbrotSequential(sizeInPx int) image.Image {
@@ -27,6 +28,38 @@ func mandelbrotPerRow(sizeInPx int) image.Image {
 			}
 		}(i)
 	}
+
+	return img
+}
+
+type pixel struct{ x, y int }
+
+func mandelbrotWorkers(sizeInPx, workerCount int) image.Image {
+	img := image.NewGray(image.Rect(0, 0, sizeInPx, sizeInPx))
+
+	c := make(chan (pixel), sizeInPx*sizeInPx)
+
+	var waitGroup sync.WaitGroup
+	waitGroup.Add(workerCount)
+
+	for w := 0; w < workerCount; w++ {
+		go func() {
+			for px := range c {
+				i := px.x
+				j := px.y
+				img.Set(i, j, getColour(i, j, sizeInPx, sizeInPx))
+			}
+			waitGroup.Done()
+		}()
+	}
+
+	for i := 0; i < sizeInPx; i++ {
+		for j := 0; j < sizeInPx; j++ {
+			c <- pixel{i, j}
+		}
+	}
+	close(c)
+	waitGroup.Wait()
 
 	return img
 }
