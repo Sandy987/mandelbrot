@@ -6,6 +6,10 @@ import (
 	"sync"
 )
 
+const (
+	complexity = 512
+)
+
 func mandelbrotSequential(sizeInPx int) image.Image {
 	img := image.NewGray(image.Rect(0, 0, sizeInPx, sizeInPx))
 
