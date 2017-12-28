@@ -39,7 +39,7 @@ func mandelbrotPerRow(sizeInPx int) image.Image {
 type pixel struct{ x, y int }
 
 func mandelbrotWorkers(sizeInPx, workerCount int) image.Image {
-	img := image.NewGray(image.Rect(0, 0, sizeInPx, sizeInPx))
+	img := image.NewRGBA(image.Rect(0, 0, sizeInPx, sizeInPx))
 
 	c := make(chan (pixel), sizeInPx*sizeInPx)
 
@@ -82,5 +82,5 @@ func getColour(px, py, width, height int) color.Color {
 	for i := 0; x*x+y*y < complexity && i < max; i++ {
 		x, y = x*x-y*y+x0, 2*x*y+y0
 	}
-	return color.Gray{uint8(x)}
+	return color.RGBA{uint8(x), uint8(x * 0.8), uint8(x * 0.3), 255}
 }
